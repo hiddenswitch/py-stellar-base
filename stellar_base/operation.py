@@ -107,6 +107,7 @@ class Operation(object):
                 raise ValueError(
                     "You need pass `price` params as `digit` or `{'n': numerator, 'd': denominator}`"
                 )
+            return {'n': price['n'], 'd': price['d']}
         else:
             price = best_r(price)
         return price
