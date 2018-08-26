@@ -2,6 +2,7 @@
 
 import base64
 from decimal import Context, Decimal, Inexact
+from collections import Mapping
 
 from .asset import Asset
 from .stellarxdr import Xdr
@@ -90,18 +91,18 @@ class Operation(object):
             serialization.
 
         """
-        if not isinstance(value, str):
-            raise TypeError("value of type '{}' is not a string"
+        try:
+            value = Decimal(str(value))
+        except:
+            raise TypeError("value of type '{}' is not convertible to a Decimal"
                             ".".format(value))
-
         # throw exception if value * ONE has decimal places (it can't be
         # represented as int64)
-        return int((Decimal(value) *
-                    ONE).to_integral_exact(context=Context(traps=[Inexact])))
+        return int((value * ONE).to_integral_exact(context=Context(traps=[Inexact])))
 
     @staticmethod
     def to_xdr_price(price):
-        if isinstance(price, dict):
+        if isinstance(price, Mapping):
             if not ('n' in price and 'd' in price):
                 raise ValueError(
                     "You need pass `price` params as `digit` or `{'n': numerator, 'd': denominator}`"
